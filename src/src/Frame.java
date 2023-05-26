@@ -29,6 +29,7 @@ public class Frame {
         JSlider slider = new JSlider(SwingConstants.HORIZONTAL, 8, 24, 8);
         JLabel sliderval = new JLabel("8");
         JTextField password = new JTextField();
+        password.setMaximumSize(new Dimension(window.getWidth(), 50));
 
         // Edits
         slider.setPreferredSize(new Dimension(200, 30));
