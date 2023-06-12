@@ -1,14 +1,24 @@
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 
 public class Frame {
+
+    public static void copyButtonPressed(String pw) {
+        StringSelection str = new StringSelection(pw);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(str, null);
+
+    }
+
     public static void main(String[] args) {
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
         window.setTitle("Password Generator");
-        window.setPreferredSize(new Dimension(450, 600));
+        window.setMinimumSize(new Dimension(450, 100));
 
         JPanel panel = new JPanel();
         window.add(panel);
@@ -27,12 +37,19 @@ public class Frame {
 
         // Defining components
         JSlider slider = new JSlider(SwingConstants.HORIZONTAL, 8, 24, 8);
-        JLabel sliderval = new JLabel("8");
+        JCheckBox options = new JCheckBox("Symbols");
         JTextField password = new JTextField();
-        password.setMaximumSize(new Dimension(window.getWidth(), 50));
+        JButton copyButton = new JButton("Copy");
+        password.setMaximumSize(new Dimension(300, 30));
 
         // Edits
-        slider.setPreferredSize(new Dimension(200, 30));
+        slider.setMaximumSize(new Dimension(300, 30));
+        slider.setMajorTickSpacing(4);
+        slider.setMinorTickSpacing(1);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        copyButton.addActionListener(e -> copyButtonPressed(password.getText()));
+        options.setPreferredSize(new Dimension(100, 20));
 
         layout.setHorizontalGroup(
                 layout.createSequentialGroup()
@@ -40,16 +57,23 @@ public class Frame {
                                 .addComponent(slider)
                                 .addComponent(password)
                         )
-                        .addComponent(sliderval)
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(options)
+                                .addComponent(copyButton)
+                        )
 
         );
 
         layout.setVerticalGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(slider)
-                        .addComponent(sliderval))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup()
+                                .addComponent(slider)
+                        )
+                                .addComponent(options)
+                        )
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(password)
+                        .addComponent(copyButton)
                 ));
         layout.setAutoCreateContainerGaps(true);
         layout.setAutoCreateGaps(true);
@@ -57,8 +81,8 @@ public class Frame {
 
         ChangeListener a = e -> {
             int length = slider.getValue();
-            sliderval.setText(String.valueOf(length));
-            password.setText(Generator.generate(length, true));
+            boolean symbs = options.isSelected();
+            password.setText(Generator.generate(length, symbs));
         };
         slider.addChangeListener(a);
 
